@@ -14,11 +14,11 @@ __copyright__ = 'Copyright 2016, Kala_Kulovana'
 
 import unittest
 
-from PyQt4.QtGui import QDialogButtonBox, QDialog
+from qgis.PyQt.QtWidgets import QDialogButtonBox, QDialog
 
 from map_corners_coordinates_dialog import Map_Corners_CoordinatesDialog
 
-from utilities import get_qgis_app
+from .utilities import get_qgis_app
 QGIS_APP = get_qgis_app()
 
 

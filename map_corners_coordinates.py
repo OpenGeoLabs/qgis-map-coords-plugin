@@ -20,19 +20,20 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, Qt, QFileInfo
-from PyQt4.QtGui import QComboBox, QToolButton, QIcon, QAction, QFileDialog
-from qgis.core import QCoreApplication, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsProject
+from qgis.PyQt.QtCore import QCoreApplication, QSettings, QTranslator, qVersion, Qt, QFileInfo
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QComboBox, QToolButton, QAction, QFileDialog
+from qgis.core import QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsProject, Qgis
 from qgis.utils import QgsMessageBar
 
 
 # Initialize Qt resources from file resources.py
-import resources
+from . import resources
 import os
     
 #import corners_tool
 # Import the code for the DockWidget
-from map_corners_coordinates_dialog import MapCornersCoordinatesDialog
+from .map_corners_coordinates_dialog import MapCornersCoordinatesDialog
 import os.path
 # from os.path import dirname, ...
 
@@ -77,9 +78,9 @@ class MapCornersCoordinates():
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&Map Corners Coordinates')
+        self.menu = self.tr('&Map Corners Coordinates')
         # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(self.tr(u'Map Corners Coordinates'))
+        self.toolbar = self.iface.addToolBar(self.tr('Map Corners Coordinates'))
         self.toolbar.setObjectName('MapCornersCoordinates')
 
         # Disable saveButton since there is no file chosen (method dirButton)
@@ -209,7 +210,7 @@ class MapCornersCoordinates():
         icon_path = ':/plugins/Map_Corners_Coordinates/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'Map Corners Coordinates'),
+            text=self.tr('Map Corners Coordinates'),
             callback=self.run,
             parent=self.iface.mainWindow())
 
@@ -222,7 +223,7 @@ class MapCornersCoordinates():
 
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&Map_Corners_Coordinates'),
+                self.tr('&Map_Corners_Coordinates'),
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
@@ -231,8 +232,8 @@ class MapCornersCoordinates():
     def dirButton(self):
         
         """Get the destination file, where captured coordinates are saved."""
-        self.namedir = QFileDialog.getSaveFileName(self.dlg, self.tr(u"Select destination file"), QFileInfo(QgsProject.instance().fileName()).fileName().split('.')[0]+'.txt', '*.txt')
-        self.dlg.dir_name.setText(self.namedir)
+        self.namedir = QFileDialog.getSaveFileName(self.dlg, self.tr("Select destination file"), QFileInfo(QgsProject.instance().fileName()).fileName().split('.')[0]+'.txt', '*.txt')
+        self.dlg.dir_name.setText(self.namedir[0])
 
         # Enable the saveButton if file is chosen
         if not self.dlg.dir_name.text():
@@ -250,13 +251,13 @@ class MapCornersCoordinates():
         if self.dlg.system_box.currentText() == "EPSG:4326" and self.crs.authid() != "EPSG:4326":
             crsSrc = QgsCoordinateReferenceSystem(str(self.crs.authid()))
             if not crsSrc.isValid():
-                self.iface.messageBar().pushMessage(self.tr(u"Error"),
-                                                    self.tr(u"{} is not valid SRS.").format(self.crs.authid()),
-                                                    level=QgsMessageBar.CRITICAL, duration=3)
+                self.iface.messageBar().pushMessage(self.tr("Error"),
+                                                    self.tr("{} is not valid SRS.").format(self.crs.authid()),
+                                                    level=Qgis.Critical, duration=3)
                 return
 
             crsDest = QgsCoordinateReferenceSystem("EPSG:4326")
-            tr = QgsCoordinateTransform(crsSrc, crsDest)
+            tr = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
             self.e = tr.transform(self.e)
 
     def readCoor(self):
@@ -280,9 +281,9 @@ class MapCornersCoordinates():
         
         fileName = self.dlg.dir_name.text()
         if not fileName:
-            self.iface.messageBar().pushMessage(self.tr(u"Error"),
-                                                self.tr(u"No file given."),
-                                                level=QgsMessageBar.CRITICAL, duration = 3)
+            self.iface.messageBar().pushMessage(self.tr("Error"),
+                                                self.tr("No file given."),
+                                                level=Qgis.Critical, duration = 3)
             return
         
         try:
@@ -290,13 +291,13 @@ class MapCornersCoordinates():
         except IOError as e:
             self.iface.messageBar().pushMessage("Error",
                                                 "Unable open {} for writing. Reason: {}".format(fileName, e),
-                                                level=QgsMessageBar.CRITICAL, duration = 3)
+                                                level=Qgis.Critical, duration = 3)
             return
 
         if not self.dlg.coor_NWX.text():
-            self.iface.messageBar().pushMessage(self.tr(u"Error"),
-                                                self.tr(u"No coordinates captured."),
-                                                level=QgsMessageBar.CRITICAL, duration = 3)
+            self.iface.messageBar().pushMessage(self.tr("Error"),
+                                                self.tr("No coordinates captured."),
+                                                level=Qgis.Critical, duration = 3)
             return
           
         f.write('''{title}
@@ -333,7 +334,7 @@ Y: {sw_y}{ls}'''.format(title='Map Corners Coordinates',
         f.close()
         self.iface.messageBar().pushMessage("Info",
                                             "File {} saved.".format(fileName),
-                                            level=QgsMessageBar.INFO, duration = 3)
+                                            level=Qgis.Info, duration = 3)
 
     def updateCrs(self):
 
