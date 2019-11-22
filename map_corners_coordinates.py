@@ -23,9 +23,9 @@
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, QTranslator, qVersion, Qt, QFileInfo
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QComboBox, QToolButton, QAction, QFileDialog
-from qgis.core import QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsProject, Qgis
+from qgis.core import QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsProject, Qgis, QgsSettings
 from qgis.utils import QgsMessageBar
-
+from os.path import expanduser
 
 # Initialize Qt resources from file resources.py
 from . import resources
@@ -232,8 +232,15 @@ class MapCornersCoordinates():
     def dirButton(self):
         
         """Get the destination file, where captured coordinates are saved."""
-        self.namedir = QFileDialog.getSaveFileName(self.dlg, self.tr("Select destination file"), QFileInfo(QgsProject.instance().fileName()).fileName().split('.')[0]+'.txt', '*.txt')
+        s = QgsSettings()
+        # get the home directory
+        home = expanduser("~")
+        # get saved path to file or home directory if it does not exists
+        path = s.value("qgis-map-coords-plugin/path", home + "/coords.txt")
+        self.namedir = QFileDialog.getSaveFileName(self.dlg, self.tr("Select destination file"), path, '*.txt')
         self.dlg.dir_name.setText(self.namedir[0])
+        # save the path to the settings
+        s.setValue("qgis-map-coords-plugin/path", self.namedir[0])
 
         # Enable the saveButton if file is chosen
         if not self.dlg.dir_name.text():
