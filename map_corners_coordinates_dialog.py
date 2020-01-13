@@ -26,11 +26,10 @@ import os
 from qgis.PyQt import QtGui, QtWidgets, uic
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    #os.path.dirname(__file__), 'map_corners_coordinates_dialog_base.ui'))
-    os.path.dirname(__file__), 'map_corners_coordinates_qdockwidget.ui')) #zmena
+    os.path.dirname(__file__), 'map_corners_coordinates_qdockwidget.ui'))
 
 
-class MapCornersCoordinatesDialog(QtWidgets.QDockWidget, FORM_CLASS): #zmena
+class MapCornersCoordinatesDialog(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(MapCornersCoordinatesDialog, self).__init__(parent)
