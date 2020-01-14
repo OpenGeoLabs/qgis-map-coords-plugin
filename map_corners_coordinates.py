@@ -292,53 +292,42 @@ class MapCornersCoordinates():
                                                 self.tr("No file given."),
                                                 level=Qgis.Critical, duration = 3)
             return
-        
-        try:
-            f = open(fileName, 'w')
-        except IOError as e:
-            self.iface.messageBar().pushMessage("Error",
-                                                "Unable open {} for writing. Reason: {}".format(fileName, e),
-                                                level=Qgis.Critical, duration = 3)
-            return
 
         if not self.dlg.coor_NWX.text():
             self.iface.messageBar().pushMessage(self.tr("Error"),
                                                 self.tr("No coordinates captured."),
                                                 level=Qgis.Critical, duration = 3)
             return
-          
-        f.write('''{title}
-Project: {project}
-SRS: {crs}
+        
+        try:
+            with open(fileName, 'w') as f:
+                f.write("{title}{ls}Project: {project}{ls}SRS: {crs}{ls}{ls}".format(
+                    title='Map Corners Coordinates',
+                    project=QFileInfo(QgsProject.instance().fileName()).fileName().split('.')[0],
+                    crs=self.dlg.system_box.currentText(),
+                    ls=os.linesep))
+                f.write("NW (upper left){ls}X: {nw_x}{ls}Y: {nw_y}{ls}{ls}".format(
+                    nw_x=self.dlg.coor_NWX.text(),
+                    nw_y=self.dlg.coor_NWY.text(),
+                    ls=os.linesep))
+                f.write("NE (upper right){ls}X: {ne_x}{ls}Y: {ne_y}{ls}{ls}".format(
+                    ne_x=self.dlg.coor_NEX.text(),
+                    ne_y=self.dlg.coor_NEY.text(),
+                    ls=os.linesep))
+                f.write("SE (bottom right){ls}X: {se_x}{ls}Y: {se_y}{ls}{ls}".format(
+                    se_x=self.dlg.coor_SEX.text(),
+                    se_y=self.dlg.coor_SEY.text(),
+                    ls=os.linesep))
+                f.write("SW (bottom left){ls}X: {sw_x}{ls}Y: {sw_y}{ls}".format(
+                    sw_x=self.dlg.coor_SWX.text(),
+                    sw_y=self.dlg.coor_SWY.text(),
+                    ls=os.linesep))
+        except IOError as e:
+            self.iface.messageBar().pushMessage("Error",
+                                                "Unable open {} for writing. Reason: {}".format(fileName, e),
+                                                level=Qgis.Critical, duration = 3)
+            return
 
-NW (upper left)
-X: {nw_x}
-Y: {nw_y}
-
-NE (upper right)
-X: {ne_x}
-Y: {ne_y}
-
-SE (bottom right)
-X: {se_x}
-Y: {se_y}
-
-SW (bottom left)
-X: {sw_x}
-Y: {sw_y}{ls}'''.format(title='Map Corners Coordinates',
-                             project=QFileInfo(QgsProject.instance().fileName()).fileName().split('.')[0],
-                             crs=self.dlg.system_box.currentText(),
-                             nw_x=self.dlg.coor_NWX.text(),
-                             nw_y=self.dlg.coor_NWY.text(),
-                             ne_x=self.dlg.coor_NEX.text(),
-                             ne_y=self.dlg.coor_NEY.text(),
-                             se_x=self.dlg.coor_SEX.text(),
-                             se_y=self.dlg.coor_SEY.text(),
-                             sw_x=self.dlg.coor_SWX.text(),
-                             sw_y=self.dlg.coor_SWY.text(),
-                             ls=os.linesep))
-              
-        f.close()
         self.iface.messageBar().pushMessage("Info",
                                             "File {} saved.".format(fileName),
                                             level=Qgis.Info, duration = 3)
