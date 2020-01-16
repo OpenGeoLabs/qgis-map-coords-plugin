@@ -301,27 +301,28 @@ class MapCornersCoordinates():
         
         try:
             with open(fileName, 'w') as f:
+                # use '\n', see https://docs.python.org/3/library/os.html#os.linesep
                 f.write("{title}{ls}Project: {project}{ls}SRS: {crs}{ls}{ls}".format(
                     title='Map Corners Coordinates',
                     project=QFileInfo(QgsProject.instance().fileName()).fileName().split('.')[0],
                     crs=self.dlg.system_box.currentText(),
-                    ls=os.linesep))
+                    ls='\n'))
                 f.write("NW (upper left){ls}X: {nw_x}{ls}Y: {nw_y}{ls}{ls}".format(
                     nw_x=self.dlg.coor_NWX.text(),
                     nw_y=self.dlg.coor_NWY.text(),
-                    ls=os.linesep))
+                    ls='\n'))
                 f.write("NE (upper right){ls}X: {ne_x}{ls}Y: {ne_y}{ls}{ls}".format(
                     ne_x=self.dlg.coor_NEX.text(),
                     ne_y=self.dlg.coor_NEY.text(),
-                    ls=os.linesep))
+                    ls='\n'))
                 f.write("SE (bottom right){ls}X: {se_x}{ls}Y: {se_y}{ls}{ls}".format(
                     se_x=self.dlg.coor_SEX.text(),
                     se_y=self.dlg.coor_SEY.text(),
-                    ls=os.linesep))
+                    ls='\n'))
                 f.write("SW (bottom left){ls}X: {sw_x}{ls}Y: {sw_y}{ls}".format(
                     sw_x=self.dlg.coor_SWX.text(),
                     sw_y=self.dlg.coor_SWY.text(),
-                    ls=os.linesep))
+                    ls='\n'))
         except IOError as e:
             self.iface.messageBar().pushMessage("Error",
                                                 "Unable open {} for writing. Reason: {}".format(fileName, e),
