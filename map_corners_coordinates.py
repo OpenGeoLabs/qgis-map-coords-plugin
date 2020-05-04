@@ -69,8 +69,8 @@ class MapCornersCoordinates:
         self.actions = []
         self.menu = self.tr(u'&Map Corners Coordinates')
         # TODO: We are going to let the user set this up in a future iteration
-        # self.toolbar = self.iface.addToolBar(u'MapCornersCoordinates')
-        # self.toolbar.setObjectName(u'MapCornersCoordinates')
+        self.toolbar = self.iface.addToolBar(u'MapCornersCoordinates')
+        self.toolbar.setObjectName(u'MapCornersCoordinates')
 
         #print "** INITIALIZING MapCornersCoordinates"
 
@@ -156,10 +156,10 @@ class MapCornersCoordinates:
             action.setWhatsThis(whats_this)
 
         if add_to_toolbar:
-            # self.toolbar.addAction(action)
-            self.toolButton = QToolButton()
-            self.iface.addToolBarWidget(self.toolButton)
-            self.toolButton.setDefaultAction(action)
+            self.toolbar.addAction(action)
+            # self.toolButton = QToolButton()
+            # self.iface.addToolBarWidget(self.toolButton)
+            # self.toolButton.setDefaultAction(action)
 
         if add_to_menu:
             self.iface.addPluginToMenu(
@@ -211,8 +211,7 @@ class MapCornersCoordinates:
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
-        # del self.toolbar
-        del self.toolButton
+        del self.toolbar
 
     #--------------------------------------------------------------------------
 
